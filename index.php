@@ -1,17 +1,15 @@
 <?php
-require_once __DIR__."/vendor/autoload.php";
+require_once __DIR__ . "/vendor/autoload.php";
+require_once __DIR__ . "/app/config/define.php";
+
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
-$dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
-    $r->addRoute('GET', '/test', function(){
-        return "my test";
-    });
-    // {id} must be a number (\d+)
-   });
+\core\BeanFactory::init();
+$dispatcher = \core\BeanFactory::getBean('RouterCollector')->getDispatcher();
 
-$swoole = new Swoole\Http\Server('0.0.0.0','8000');
-$swoole->on('request',function(Request $request,Response $response) use($dispatcher){
+$swoole = new Swoole\Http\Server('0.0.0.0', '8000');
+$swoole->on('request', function (Request $request, Response $response) use ($dispatcher) {
     $my_request = \core\http\Request::init($request);
     $routeInfo = $dispatcher->dispatch($my_request->getMethod(), $my_request->getUri());
     switch ($routeInfo[0]) {

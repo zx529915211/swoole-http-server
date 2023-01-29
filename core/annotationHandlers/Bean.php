@@ -1,8 +1,8 @@
 <?php
 
-namespace core\annotations;
+namespace core\annotationHandlers;
 
-use core\BeanFactory;
+use core\annotations\Bean;
 
 return [
     /**
@@ -19,13 +19,5 @@ return [
         $container->set($beanName, $instance);
     },
 
-    //属性注解
-    Value::class => function (\ReflectionProperty $prop,$instance,$anno_ref) {
-        $param = $anno_ref->getArguments();
-        $value = BeanFactory::getEnv($param['name'],'');
-        if (empty($value) || $param['name'] == '') {
-            return $instance;
-        }
-        $prop->setValue($instance,BeanFactory::getEnv($param['name']));
-    },
+
 ];

@@ -30,11 +30,21 @@ class BeanFactory
     public static function init()
     {
         self::$env = parse_ini_file(ROOT_PATH . "/env");
-        self::$handlers = require_once(ROOT_PATH . "/core/annotations/AnnotationHandlers.php");
+        $handlers = glob(ROOT_PATH."/core/annotationHandlers/*.php");
+        foreach ($handlers as $handler){
+            self::$handlers = array_merge(self::$handlers,require_once ($handler));
+        }
         $builder = new ContainerBuilder();
         $builder->useAnnotations(true);
         self::$container = $builder->build();
-        self::ScanBeans();
+        $scans = [
+            ROOT_PATH."/core/init" => "core\\",
+            self::getEnv('scan_dir', ROOT_PATH . "/app") => self::getEnv('scan_root_namespace', "App\\")
+        ];
+        //预先扫描目录，解析其中的注解
+        foreach ($scans as $scan_dir => $namespace){
+            self::ScanBeans($scan_dir,$namespace);
+        }
     }
 
 
@@ -56,11 +66,8 @@ class BeanFactory
      * 扫描所有的类文件 并且解析注解
      * @throws \ReflectionException
      */
-    public static function ScanBeans()
+    public static function ScanBeans($scan_dir,$scan_root_namespace)
     {
-        //注解处理函数
-        $scan_dir = self::getEnv('scan_dir', ROOT_PATH . "/app");
-        $scan_root_namespace = self::getEnv('scan_root_namespace', "App\\");
         $phpfile = glob($scan_dir . '/*.php');
         foreach ($phpfile as $file) {
             require_once($file);
@@ -73,7 +80,7 @@ class BeanFactory
                 //处理属性注解
                 self::handlerPropertyAnnotations($instance, $ref_class);
                 //处理方法注解
-
+                self::handlerMethodAnnotations($instance, $ref_class);
                 //处理类注解
                 self::handlerClassAnnotations($instance, $ref_class);
             }
@@ -111,6 +118,25 @@ class BeanFactory
                 $handler = self::$handlers[$prop_anno->getName()];
                 //执行类注解处理函数
                 $handler($prop, $instance, $prop_anno);
+            }
+        }
+    }
+
+    /**
+     * 处理方法注解
+     * @param $instance
+     * @param \ReflectionClass $ref_class
+     */
+    private static function handlerMethodAnnotations($instance, \ReflectionClass $ref_class)
+    {
+        //获取对象的所有属性
+        $methods= $ref_class->getMethods();
+        foreach ($methods as $method) {
+            $method_annos = $method->getAttributes();
+            foreach ($method_annos as $method_anno){
+                $handler = self::$handlers[$method_anno->getName()];
+                //执行类注解处理函数
+                $handler($method, $instance, $method_anno);
             }
         }
     }
