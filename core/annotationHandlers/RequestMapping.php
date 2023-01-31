@@ -17,8 +17,25 @@ return [
         /**@var $router \core\init\RouterCollector */
         $router = BeanFactory::getBean("RouterCollector");
         //收集路由
-        $router->addRouter($request_method, $path, function () use ($method, $instance) {
-            return $method->invoke($instance);
+        $router->addRouter($request_method, $path, function ($params) use ($method, $instance) {
+            $inputParam = [];
+            //得到方法的反射参数
+            $ref_params = $method->getParameters();
+            $param_keys = array_keys($params);
+            foreach ($ref_params as $ref_param) {
+                $param_type = $ref_param->getType();
+                //isBuiltin方法判断类型是否为PHP内置类型，不是的话则是类
+                if (in_array($param_type->getName(), $param_keys) && !$param_type->isBuiltin()) {
+                    //request response类会符合这个条件
+                    $params[$ref_param->getName()] = $params[$ref_param->getType()->getName()];
+                }
+                if (isset($params[$ref_param->getName()])) {
+                    $inputParam[] = $params[$ref_param->getName()];
+                } else {
+                    $inputParam[] = $ref_param->isOptional() ? $ref_param->getDefaultValue() : false;
+                }
+            }
+            return $method->invokeArgs($instance, $inputParam);
         });
     },
 

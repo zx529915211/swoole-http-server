@@ -40,9 +40,9 @@ class Request
     {
         $server = $swooleRequest->server;
         $uri = $swooleRequest->server['request_uri'];
-        $method = $swooleRequest->server['request_method']??"GET";
+        $method = $swooleRequest->server['request_method'] ?? "GET";
         $body = $swooleRequest->rawContent();
-        $request = new self($server,$uri,$swooleRequest->get,$swooleRequest->post,$method,$swooleRequest->header,$body);
+        $request = new self($server, $uri, $swooleRequest->get, $swooleRequest->post, $method, $swooleRequest->header, $body);
         $request->swooleRequest = $swooleRequest;
         return $request;
     }
@@ -80,11 +80,11 @@ class Request
     }
 
     /**
-     * @return mixed
+     * @return array
      */
-    public function getQueryParams()
+    public function getQueryParams(): array
     {
-        return $this->queryParams;
+        return $this->queryParams ?: [];
     }
 
     /**
@@ -96,11 +96,11 @@ class Request
     }
 
     /**
-     * @return mixed
+     * @return array
      */
-    public function getPostParams()
+    public function getPostParams(): array
     {
-        return $this->postParams;
+        return $this->postParams ?: [];
     }
 
     /**
