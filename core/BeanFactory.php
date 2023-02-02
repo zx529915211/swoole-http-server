@@ -34,9 +34,7 @@ class BeanFactory
         foreach ($handlers as $handler){
             self::$handlers = array_merge(self::$handlers,require_once ($handler));
         }
-        $builder = new ContainerBuilder();
-        $builder->useAnnotations(true);
-        self::$container = $builder->build();
+
         $scans = [
             ROOT_PATH."/core/init" => "core\\",
             self::getEnv('scan_dir', ROOT_PATH . "/app") => self::getEnv('scan_root_namespace', "App\\")
@@ -45,6 +43,11 @@ class BeanFactory
         foreach ($scans as $scan_dir => $namespace){
             self::ScanBeans($scan_dir,$namespace);
         }
+    }
+
+    public static function setContainer($container)
+    {
+        self::$container = $container;
     }
 
 
@@ -62,18 +65,35 @@ class BeanFactory
         }
     }
 
+
+    private static function getAllBeanFiles($dir)
+    {
+        $files = glob($dir.'/*');
+        $ret = [];
+        foreach ($files as $file){
+            if(is_dir($file)){
+                $ret = array_merge($ret, self::getAllBeanFiles($file));
+            }elseif (pathinfo($file)['extension'] == 'php'){
+                $ret[] = $file;
+            }
+        }
+        return $ret;
+    }
+
     /**
      * 扫描所有的类文件 并且解析注解
      * @throws \ReflectionException
      */
     public static function ScanBeans($scan_dir,$scan_root_namespace)
     {
-        $phpfile = glob($scan_dir . '/*.php');
-        foreach ($phpfile as $file) {
-            require_once($file);
+        $allFiles = self::getAllBeanFiles($scan_dir);
+        foreach ($allFiles as $file){
+            require_once $file;
         }
         //循环处理已加载的类里的所有注解
+
         foreach (get_declared_classes() as $class) {
+//            var_dump($class);
             if (strstr($class, $scan_root_namespace)) {
                 $ref_class = new \ReflectionClass($class);
                 $instance = self::$container->get($ref_class->getName());

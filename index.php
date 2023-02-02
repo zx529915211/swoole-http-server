@@ -7,7 +7,6 @@ use Swoole\Http\Response;
 
 \core\BeanFactory::init();
 $dispatcher = \core\BeanFactory::getBean('RouterCollector')->getDispatcher();
-
 $swoole = new Swoole\Http\Server('0.0.0.0', '8000');
 $swoole->on('request', function (Request $request, Response $response) use ($dispatcher) {
     $my_request = \core\http\Request::init($request);

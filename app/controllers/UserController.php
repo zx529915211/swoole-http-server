@@ -20,7 +20,7 @@ class UserController
     {
 //        $response->write('6666');
 //        var_dump($request->getQueryParams());
-        $response->redirect('http://www.baidu.com');
+//        $response->redirect('http://www.baidu.com');
         return ['id' => 1,'name' => 'gzf'];
     }
 }

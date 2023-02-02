@@ -90,7 +90,7 @@ class Request
     /**
      * @param mixed $queryParams
      */
-    public function setQueryParams($queryParams): void
+    public function setQueryParams(mixed $queryParams): void
     {
         $this->queryParams = $queryParams;
     }
@@ -106,7 +106,7 @@ class Request
     /**
      * @param mixed $postParams
      */
-    public function setPostParams($postParams): void
+    public function setPostParams(mixed $postParams): void
     {
         $this->postParams = $postParams;
     }
@@ -114,7 +114,7 @@ class Request
     /**
      * @return mixed
      */
-    public function getMethod()
+    public function getMethod(): mixed
     {
         return $this->method;
     }
