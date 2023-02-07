@@ -16,9 +16,10 @@ class FileHelper
         $files = glob($dir);
         $ret = [];
         foreach ($files as $file) {
+            $file_info = pathinfo($file);
             if (is_dir($file) && strpos($file, $ignore) === false) {
                 $ret[] = self::getFileMd5($file . "/*",$ignore);
-            } elseif (pathinfo($file)['extension'] == 'php') {
+            } elseif (isset($file_info['extension']) && $file_info['extension'] == 'php') {
                 $ret[] = md5_file($file);
             }
         }

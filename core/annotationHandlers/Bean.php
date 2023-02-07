@@ -3,6 +3,7 @@
 namespace core\annotationHandlers;
 
 use core\annotations\Bean;
+use core\Container;
 
 return [
     /**
@@ -16,6 +17,7 @@ return [
             $arrs = explode("\\", get_class($instance));
             $beanName = end($arrs);
         }
+        /**@var $container Container*/
         $container->set($beanName, $instance);
     },
 

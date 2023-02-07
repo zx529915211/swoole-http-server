@@ -2,14 +2,16 @@
 
 use core\BeanFactory;
 use core\server\HttpServer;
-use DI\ContainerBuilder;
-
+//use DI\ContainerBuilder;
 require_once __DIR__ . "/vendor/autoload.php";
 require_once __DIR__ . "/app/config/define.php";
 
-$builder = new ContainerBuilder();
-$builder->useAnnotations(true);
-BeanFactory::setContainer($builder->build());
+//$builder = new ContainerBuilder();
+//$builder->useAnnotations(true);
+//BeanFactory::setContainer($builder->build());
+
+//把第三方容器替换成自定义容器
+BeanFactory::setContainer(\core\Container::getContainer());
 if ($argc == 2) {
     $cmd = $argv[1];
     switch ($cmd){

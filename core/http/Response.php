@@ -19,7 +19,7 @@ class Response
     public function __construct($swooleResponse)
     {
         $this->swooleResponse = $swooleResponse;
-        $this->setHeader("Content-type",'text/plain;charset=utf8');
+        $this->setHeader("Content-type", 'text/plain;charset=utf8');
     }
 
     public static function init(\Swoole\Http\Response $response)
@@ -67,7 +67,7 @@ class Response
      * @param string $key
      * @param string $value
      */
-    public function setHeader(string $key,string $value)
+    public function setHeader(string $key, string $value)
     {
         $this->swooleResponse->header($key, $value);
     }
@@ -91,10 +91,10 @@ class Response
     public function end()
     {
         $ret = $this->getBody();
-        if(is_array($ret)){
-            $this->setHeader('Content-type',"application/json;charset=utf8");
+        if (is_array($ret) || is_object($ret)) {
+            $this->setHeader('Content-type', "application/json;charset=utf8");
             $this->write(json_encode($ret));
-        }else{
+        } else {
             $this->write($ret);
         }
         $this->swooleResponse->end();

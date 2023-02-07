@@ -4,6 +4,7 @@
 namespace core\server;
 
 
+use core\init\HotUpdateProcess;
 use FastRoute\Dispatcher;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
@@ -33,18 +34,19 @@ class HttpServer
 
     public function onStart(Server $server)
     {
-        cli_set_process_title('guyue-master');
+//        cli_set_process_title('guyue-master');
         $pid = $server->master_pid;
-        file_put_contents('./guyue.pid', $pid);
+        file_put_contents(ROOT_PATH."/guyue.pid", $pid);
     }
 
     public function onShutDown(Server $server)
     {
-        unlink('./guyue.pid');
+        unlink(ROOT_PATH."/guyue.pid");
     }
 
     public function onRequest(Request $request, Response $response)
     {
+
         $my_request = \core\http\Request::init($request);
         $my_response = \core\http\Response::init($response);
         $routeInfo = $this->dispatcher->dispatch($my_request->getMethod(), $my_request->getUri());
@@ -74,17 +76,18 @@ class HttpServer
     {
         \core\BeanFactory::init();
         $this->dispatcher = \core\BeanFactory::getBean('RouterCollector')->getDispatcher();
-        cli_set_process_title('guyue-worker');
-
+//        cli_set_process_title('guyue-worker');
     }
 
     public function onManagerStart(Server $server)
     {
-        cli_set_process_title('guyue-manager');
+//        cli_set_process_title('guyue-manager');
     }
 
     public function run()
     {
+        $hotUpdate = new HotUpdateProcess();
+        $this->server->addProcess($hotUpdate->run());
         $this->server->start();
     }
 
