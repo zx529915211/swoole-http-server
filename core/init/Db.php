@@ -14,26 +14,38 @@ use Illuminate\Database\Capsule\Manager as baseDb;
 class Db
 {
     private $baseDb;
+    private $dbSource;
 
     public function __construct()
     {
         $this->baseDb = new baseDb();
-        $this->baseDb->addConnection([
-            'driver' => 'mysql',
-            'host' => '120.25.161.33',
-            'database' => 'gzf',
-            'username' => 'root',
-            'password' => '86315420',
-            'charset' => 'utf8',
-            'collation' => 'utf8_unicode_ci',
-            'prefix' => '',
-        ]);
+        $database_config = Config::get('database');
+        foreach ($database_config as $name => $config) {
+            $this->baseDb->addConnection($config, $name);
+        }
+//        $this->baseDb->addConnection(Config::get('database.default'));
         $this->baseDb->setAsGlobal();
         $this->baseDb->bootEloquent();
     }
 
     public function __call($name, $arguments)
     {
-        return $this->baseDb::$name(...$arguments);
+        return $this->baseDb::connection($this->dbSource)->$name(...$arguments);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDbSource()
+    {
+        return $this->dbSource;
+    }
+
+    /**
+     * @param mixed $dbSource
+     */
+    public function setDbSource($dbSource): void
+    {
+        $this->dbSource = $dbSource;
     }
 }

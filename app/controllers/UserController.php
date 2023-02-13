@@ -16,8 +16,14 @@ class UserController
     /**
      * @var \core\init\Db
      */
-    #[Db]
+    #[Db(source: 'db1')]
     public $db;
+
+    /**
+     * @var \core\init\Db
+     */
+    #[Db(source: 'default')]
+    public $db2;
 
     #[Value(name: "version")]
     public $version = '1.0';
@@ -29,6 +35,17 @@ class UserController
 //        var_dump($request->getQueryParams());
 //        $response->redirect('http://www.baidu.com');
         return $this->db->table('user')->where('id','=','1')->get();
+
+//        return ['id' => 1,'name' => '111'];
+    }
+
+    #[RequestMapping(value: "/test2/{uid:\d+}")]
+    public function test2(int $uid,Request $request,Response $response)
+    {
+//        $response->write('6666');
+//        var_dump($request->getQueryParams());
+//        $response->redirect('http://www.baidu.com');
+        return $this->db2->table('user')->where('id','=','1')->get();
 
 //        return ['id' => 1,'name' => '111'];
     }

@@ -4,6 +4,8 @@
 namespace core;
 
 
+use core\init\Config;
+use core\init\Env;
 use DI\ContainerBuilder;
 
 class BeanFactory
@@ -20,7 +22,7 @@ class BeanFactory
     private static $handlers = [];
 
     /**
-     * @var IOC容器
+     * @var Container
      */
     private static $container;
 
@@ -29,7 +31,10 @@ class BeanFactory
      */
     public static function init()
     {
-        self::$env = parse_ini_file(ROOT_PATH . "/env");
+        //初始化env配置
+        Env::init();
+        //初始化config配置
+        Config::init();
         $handlers = glob(ROOT_PATH . "/core/annotationHandlers/*.php");
         foreach ($handlers as $handler) {
             self::$handlers = array_merge(self::$handlers, require_once($handler));
@@ -37,7 +42,7 @@ class BeanFactory
 
         $scans = [
             ROOT_PATH . "/core/init" => "core\\",
-            self::getEnv('scan_dir', ROOT_PATH . "/app") => self::getEnv('scan_root_namespace', "App\\")
+            Env::get('scan_dir', ROOT_PATH . "/app") => Env::get('scan_root_namespace', "App\\")
         ];
         //预先扫描目录，解析其中的注解
         foreach ($scans as $scan_dir => $namespace) {
@@ -51,18 +56,19 @@ class BeanFactory
     }
 
 
-    public static function getEnv(string $key, string $default = '')
-    {
-        return self::$env[$key] ?? $default;
-    }
 
     public static function getBean($name)
     {
         try {
             return self::$container->get($name);
         } catch (\Throwable $e) {
-            echo $e->getMessage();
+            return null;
         }
+    }
+
+    public static function setBean($name,$class)
+    {
+            return self::$container->set($name,$class);
     }
 
 
