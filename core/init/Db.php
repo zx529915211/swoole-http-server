@@ -4,6 +4,7 @@
 namespace core\init;
 
 use core\annotations\Bean;
+use core\lib\Config;
 use Illuminate\Database\Capsule\Manager as baseDb;
 
 /**
@@ -15,6 +16,7 @@ class Db
 {
     private $baseDb;
     private $dbSource;
+    public $test = 'aaa';
 
     public function __construct()
     {

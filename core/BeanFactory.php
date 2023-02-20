@@ -4,9 +4,8 @@
 namespace core;
 
 
-use core\init\Config;
-use core\init\Env;
-use DI\ContainerBuilder;
+use core\lib\Config;
+use core\lib\Env;
 
 class BeanFactory
 {

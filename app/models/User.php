@@ -4,9 +4,9 @@
 namespace App\models;
 
 
-use Illuminate\Database\Eloquent\Model;
+use core\lib\DbModel;
 
-class User extends Model
+class User extends DbModel
 {
     protected $table = 'user';
 }

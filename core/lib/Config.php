@@ -1,7 +1,7 @@
 <?php
 
 
-namespace core\init;
+namespace core\lib;
 
 
 class Config

@@ -3,6 +3,7 @@
 
 namespace App\controllers;
 
+use App\models\User;
 use core\annotations\Bean;
 use core\annotations\Db;
 use core\annotations\Value;
@@ -34,9 +35,9 @@ class UserController
 //        $response->write('6666');
 //        var_dump($request->getQueryParams());
 //        $response->redirect('http://www.baidu.com');
-        return $this->db->table('user')->where('id','=','1')->get();
-
-//        return ['id' => 1,'name' => '111'];
+//        return $this->db->table('user')->where('id','=','1')->get();
+//          return User::all();
+        return [$this->db2->test];
     }
 
     #[RequestMapping(value: "/test2/{uid:\d+}")]
