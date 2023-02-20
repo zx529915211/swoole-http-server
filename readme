@@ -1,3 +1,6 @@
 1.composer install
 
-2.控制器加上RequestMapping
+2.php boot.php start
+
+3.访问127.0.0.1/8000/test
+
