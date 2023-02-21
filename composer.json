@@ -1,5 +1,5 @@
 {
-    "name": "admin/swoole-http-server",
+    "name": "zx529915211/swoole-http-server",
     "autoload": {
         "psr-4": {
             "App\\": "app/",
