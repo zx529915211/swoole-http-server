@@ -1,4 +1,5 @@
 {
+    "type":"project",
     "name": "zx529915211/swoole-http-server",
     "autoload": {
         "psr-4": {
